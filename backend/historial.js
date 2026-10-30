@@ -13,14 +13,12 @@ router.get("/", function (req, res) {
 
   const sql = "SELECT id, plan_id, plan_nombre, accion, fecha, organizador FROM historial WHERE organizador = ? ORDER BY id DESC";
 
-  db.all(sql, [organizador], function (error, registros) {
-    if (error) {
-      res.status(500).json({ error: "No se pudo obtener el historial." });
-      return;
-    }
-
+  try {
+    const registros = db.prepare(sql).all(organizador);
     res.json(registros);
-  });
+  } catch (error) {
+    res.status(500).json({ error: "No se pudo obtener el historial." });
+  }
 });
 
 router.post("/", function (req, res) {
@@ -36,14 +34,12 @@ router.post("/", function (req, res) {
 
   const sql = "INSERT INTO historial (plan_id, plan_nombre, accion, fecha, organizador) VALUES (?, ?, ?, datetime('now', 'localtime'), ?)";
 
-  db.run(sql, [planId, planNombre, accion, organizador], function (error) {
-    if (error) {
-      res.status(500).json({ error: "No se pudo guardar el evento." });
-      return;
-    }
-
-    res.status(201).json({ id: this.lastID });
-  });
+  try {
+    const resultado = db.prepare(sql).run(planId, planNombre, accion, organizador);
+    res.status(201).json({ id: resultado.lastInsertRowid });
+  } catch (error) {
+    res.status(500).json({ error: "No se pudo guardar el evento." });
+  }
 });
 
 module.exports = router;

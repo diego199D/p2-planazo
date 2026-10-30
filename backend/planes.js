@@ -52,22 +52,17 @@ router.get("/", function (req, res) {
     sql += " WHERE " + condiciones.join(" AND ");
   }
 
-  db.all(sql, parametros, function (error, planes) {
-    if (error) {
-      res.status(500).json({ error: "No se pudieron obtener los planes." });
-      return;
-    }
-
+  try {
+    const planes = db.prepare(sql).all(parametros);
     res.json(planes.map(convertirPlan));
-  });
+  } catch (error) {
+    res.status(500).json({ error: "No se pudieron obtener los planes." });
+  }
 });
 
 router.get("/:id", function (req, res) {
-  db.get("SELECT * FROM planes WHERE id = ?", [req.params.id], function (error, plan) {
-    if (error) {
-      res.status(500).json({ error: "No se pudo obtener el plan." });
-      return;
-    }
+  try {
+    const plan = db.prepare("SELECT * FROM planes WHERE id = ?").get(req.params.id);
 
     if (!plan) {
       res.status(404).json({ error: "No se encontró el plan." });
@@ -75,7 +70,9 @@ router.get("/:id", function (req, res) {
     }
 
     res.json(convertirPlan(plan));
-  });
+  } catch (error) {
+    res.status(500).json({ error: "No se pudo obtener el plan." });
+  }
 });
 
 router.post("/", function (req, res) {
@@ -88,14 +85,11 @@ router.post("/", function (req, res) {
   const organizador = req.body.organizador || "";
   const sql = "INSERT INTO planes (nombre, descripcion, fecha, estado, alternativas, elegida, organizador) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-  db.run(sql, [nombre, descripcion, fecha, estado, JSON.stringify(alternativas), elegida, organizador], function (error) {
-    if (error) {
-      res.status(500).json({ error: "No se pudo crear el plan." });
-      return;
-    }
+  try {
+    const resultado = db.prepare(sql).run(nombre, descripcion, fecha, estado, JSON.stringify(alternativas), elegida, organizador);
 
     res.status(201).json({
-      id: this.lastID,
+      id: resultado.lastInsertRowid,
       nombre: nombre,
       descripcion: descripcion,
       fecha: fecha,
@@ -104,7 +98,9 @@ router.post("/", function (req, res) {
       elegida: elegida,
       organizador: organizador
     });
-  });
+  } catch (error) {
+    res.status(500).json({ error: "No se pudo crear el plan." });
+  }
 });
 
 router.put("/:id", function (req, res) {
@@ -117,13 +113,10 @@ router.put("/:id", function (req, res) {
   const organizador = req.body.organizador || null;
   const sql = "UPDATE planes SET nombre = ?, descripcion = ?, fecha = ?, estado = ?, alternativas = ?, elegida = ?, organizador = COALESCE(?, organizador) WHERE id = ?";
 
-  db.run(sql, [nombre, descripcion, fecha, estado, JSON.stringify(alternativas), elegida, organizador, req.params.id], function (error) {
-    if (error) {
-      res.status(500).json({ error: "No se pudo actualizar el plan." });
-      return;
-    }
+  try {
+    const resultado = db.prepare(sql).run(nombre, descripcion, fecha, estado, JSON.stringify(alternativas), elegida, organizador, req.params.id);
 
-    if (this.changes === 0) {
+    if (resultado.changes === 0) {
       res.status(404).json({ error: "No se encontró el plan." });
       return;
     }
@@ -138,15 +131,14 @@ router.put("/:id", function (req, res) {
       elegida: elegida,
       organizador: organizador
     });
-  });
+  } catch (error) {
+    res.status(500).json({ error: "No se pudo actualizar el plan." });
+  }
 });
 
 router.delete("/:id", function (req, res) {
-  db.get("SELECT * FROM planes WHERE id = ?", [req.params.id], function (error, plan) {
-    if (error) {
-      res.status(500).json({ error: "No se pudo eliminar el plan." });
-      return;
-    }
+  try {
+    const plan = db.prepare("SELECT * FROM planes WHERE id = ?").get(req.params.id);
 
     if (!plan) {
       res.status(404).json({ error: "No se encontró el plan." });
@@ -158,15 +150,11 @@ router.delete("/:id", function (req, res) {
       return;
     }
 
-    db.run("DELETE FROM planes WHERE id = ?", [req.params.id], function (error) {
-      if (error) {
-        res.status(500).json({ error: "No se pudo eliminar el plan." });
-        return;
-      }
-
-      res.json({ mensaje: "Plan eliminado." });
-    });
-  });
+    db.prepare("DELETE FROM planes WHERE id = ?").run(req.params.id);
+    res.json({ mensaje: "Plan eliminado." });
+  } catch (error) {
+    res.status(500).json({ error: "No se pudo eliminar el plan." });
+  }
 });
 
 module.exports = router;

@@ -5,7 +5,13 @@
     "start": "node backend/server.js"
   },
   "dependencies": {
+    "better-sqlite3": "^13.0.3",
     "express": "^5.1.0",
     "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.6"
   }
 }
