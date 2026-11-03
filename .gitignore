@@ -1,5 +1,11 @@
 node_modules/
 
+# Variables de entorno (contienen contraseñas)
+.env
+
+# Base de datos local (ya no se usa)
+database/*.db
+
 # Playwright
 /test-results/
 /playwright-report/

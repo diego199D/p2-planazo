@@ -1,46 +1,149 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planazo - Inicio</title>
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/inicio.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planazo</title>
+  <link rel="stylesheet" href="css/base.css" />
 </head>
 <body>
-  <main class="contenedor-login">
-    <h1>PLANAZO</h1>
-    <p id="saludo" class="saludo">Hola</p>
 
-    <h2>Mis planes</h2>
-    <button id="crear-plan" type="button">Crear nuevo plan</button>
-    <button id="ver-historial" type="button">Ver historial</button>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <span class="logo-icon">📅</span>
+      <span class="navbar-title">PLANAZO</span>
+    </div>
+    <div class="navbar-right">
+      <span class="navbar-usuario" id="navbar-nombre">Hola...</span>
+      <button class="btn btn-peligro btn-sm" onclick="cerrarSesion()">Cerrar sesión</button>
+    </div>
+  </nav>
 
-    <section class="filtros">
-      <label for="buscar-nombre">Buscar por nombre</label>
-      <input id="buscar-nombre" type="text" placeholder="Buscar por nombre">
+  <!-- MAIN CONTAINER -->
+  <div class="contenedor">
 
-      <label for="filtro-estado">Estado</label>
-      <select id="filtro-estado">
-        <option value="">Todos</option>
-        <option value="pendiente">Pendiente</option>
-        <option value="confirmado">Confirmado</option>
-        <option value="cancelado">Cancelado</option>
-      </select>
+    <!-- TABS -->
+    <div class="tabs" id="tabs-bar" role="tablist">
+      <button class="tab-btn active" data-tab="planes-base" role="tab" aria-selected="true">Planes Base</button>
+      <button class="tab-btn" data-tab="mis-planes" role="tab" aria-selected="false">Mis Planes</button>
+      <button class="tab-btn" data-tab="votaciones" role="tab" aria-selected="false">Votaciones</button>
+      <!-- Admin tab added dynamically -->
+    </div>
 
-      <label for="filtro-fecha">Fecha</label>
-      <select id="filtro-fecha">
-        <option value="">Todas las fechas</option>
-        <option value="proximos7">Próximos 7 días</option>
-        <option value="vencidos">Vencidos</option>
-      </select>
+    <!-- TAB: PLANES BASE -->
+    <div class="tab-content active" id="tab-planes-base">
+      <h2 class="section-title">Planes Base</h2>
+      <p class="section-sub">Planes aprobados disponibles para toda la comunidad.</p>
+      <div id="loading-planes-base" class="loading-msg">Cargando planes...</div>
+      <div id="lista-planes-base" class="planes-grid"></div>
+    </div>
 
-      <button id="limpiar-filtros" type="button">Limpiar filtros</button>
-      <p id="filtros-activos">Sin filtros activos</p>
-    </section>
+    <!-- TAB: MIS PLANES -->
+    <div class="tab-content" id="tab-mis-planes">
+      <div class="section-header">
+        <h2 class="section-title">Mis Planes</h2>
+        <button class="btn btn-primario" id="btn-abrir-modal">+ Crear nuevo plan</button>
+      </div>
+      <p class="section-sub">Aquí aparecen los planes que has creado.</p>
+      <div id="loading-mis-planes" class="loading-msg">Cargando tus planes...</div>
+      <div id="lista-mis-planes" class="planes-grid"></div>
+    </div>
 
-    <section id="lista-planes" class="lista-planes"></section>
-  </main>
+    <!-- TAB: VOTACIONES -->
+    <div class="tab-content" id="tab-votaciones">
+      <h2 class="section-title">Votaciones</h2>
+      <p class="section-sub">Vota en los planes base aprobados.</p>
+      <div id="loading-votaciones" class="loading-msg">Cargando votaciones...</div>
+      <div id="lista-votaciones" class="planes-grid votos-grid"></div>
+    </div>
+
+    <!-- TAB: PANEL ADMIN -->
+    <div class="tab-content" id="tab-admin" style="display:none;">
+      <h2 class="section-title">Panel de Administración</h2>
+
+      <!-- Pendientes -->
+      <section class="admin-section">
+        <h3 class="admin-section-title">📋 Planes Pendientes</h3>
+        <div id="loading-pendientes" class="loading-msg">Cargando pendientes...</div>
+        <div id="lista-pendientes"></div>
+      </section>
+
+      <!-- Crear Plan Base -->
+      <section class="admin-section">
+        <h3 class="admin-section-title">➕ Crear Plan Base</h3>
+        <div id="admin-plan-error" class="mensaje-error" style="display:none;"></div>
+        <div id="admin-plan-exito" class="mensaje-exito" style="display:none;"></div>
+        <form id="form-admin-plan" class="admin-form">
+          <div class="form-group">
+            <label for="admin-nombre">Nombre del plan</label>
+            <input type="text" id="admin-nombre" placeholder="Nombre del plan" required />
+          </div>
+          <div class="form-group">
+            <label for="admin-descripcion">Descripción</label>
+            <textarea id="admin-descripcion" rows="3" placeholder="Describe el plan..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="admin-fecha">Fecha</label>
+            <input type="date" id="admin-fecha" required />
+          </div>
+          <button type="submit" class="btn btn-primario">Crear plan base</button>
+        </form>
+      </section>
+
+      <!-- Usuarios -->
+      <section class="admin-section">
+        <h3 class="admin-section-title">👥 Usuarios registrados</h3>
+        <div id="loading-usuarios" class="loading-msg">Cargando usuarios...</div>
+        <div class="tabla-wrap">
+          <table class="tabla" id="tabla-usuarios" style="display:none;">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-usuarios"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+  </div><!-- /contenedor -->
+
+  <!-- MODAL: CREAR PLAN PERSONAL -->
+  <div id="modal-crear-plan" class="modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-titulo">Crear nuevo plan</h3>
+        <button class="modal-close" id="btn-cerrar-modal" aria-label="Cerrar">✕</button>
+      </div>
+      <div id="modal-error" class="mensaje-error" style="display:none;"></div>
+      <div id="modal-exito" class="mensaje-exito" style="display:none;"></div>
+      <form id="form-crear-plan" novalidate>
+        <div class="form-group">
+          <label for="plan-nombre">Nombre del plan</label>
+          <input type="text" id="plan-nombre" placeholder="¿Qué planeas hacer?" required />
+          <span class="campo-error" id="err-plan-nombre"></span>
+        </div>
+        <div class="form-group">
+          <label for="plan-descripcion">Descripción</label>
+          <textarea id="plan-descripcion" rows="3" placeholder="Cuéntanos más..." required></textarea>
+          <span class="campo-error" id="err-plan-desc"></span>
+        </div>
+        <div class="form-group">
+          <label for="plan-fecha">Fecha</label>
+          <input type="date" id="plan-fecha" required />
+          <span class="campo-error" id="err-plan-fecha"></span>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secundario" id="btn-cancelar-modal">Cancelar</button>
+          <button type="submit" class="btn btn-primario" id="btn-crear-plan">Crear plan</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <script src="js/inicio.js"></script>
 </body>

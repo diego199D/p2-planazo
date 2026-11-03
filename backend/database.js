@@ -1,20 +1,16 @@
-const fs = require("fs");
-const path = require("path");
-const Database = require("better-sqlite3");
+require('dotenv').config();
+const mysql = require('mysql2/promise');
 
-const rutaBase = path.join(__dirname, "../database/planazo.db");
-const esquema = fs.readFileSync(path.join(__dirname, "../database/schema.sql"), "utf8");
-const db = new Database(rutaBase);
-
-db.exec(esquema);
-
-const columnas = db.prepare("PRAGMA table_info(planes)").all();
-const tieneOrganizador = columnas.some(function (columna) {
-  return columna.name === "organizador";
+const pool = mysql.createPool({
+  host: process.env.DB_HOST || 'localhost',
+  port: process.env.DB_PORT || 3306,
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'planazo',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  timezone: '+00:00',
 });
 
-if (!tieneOrganizador) {
-  db.exec("ALTER TABLE planes ADD COLUMN organizador TEXT");
-}
-
-module.exports = db;
+module.exports = pool;
