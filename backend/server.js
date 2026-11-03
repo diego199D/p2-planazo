@@ -22,7 +22,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/votos', votosRoutes);
 
 // Fallback to frontend
-app.get('*', (req, res) => {
+app.get('/{*path}', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/login.html'));
 });
 
