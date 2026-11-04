@@ -1,6 +1,6 @@
 const listaHistorial = document.getElementById("lista-historial");
 const volver = document.getElementById("volver");
-const usuario = JSON.parse(localStorage.getItem("usuario"));
+const usuario = JSON.parse(sessionStorage.getItem("usuario"));
 
 function textoAccion(accion) {
   return accion === "Confirmado" ? "Plan confirmado" : "Plan cancelado";

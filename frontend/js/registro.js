@@ -136,8 +136,8 @@ async function manejarRegistro(e) {
     }
 
     // Persist credentials
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('usuario', JSON.stringify(data.usuario));
+    sessionStorage.setItem('token', data.token);
+    sessionStorage.setItem('usuario', JSON.stringify(data.usuario));
 
     mostrarExito('¡Cuenta creada! Redirigiendo…');
 
@@ -156,7 +156,7 @@ async function manejarRegistro(e) {
 
 (function init() {
   // If already logged in, skip registration
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   if (token) {
     window.location.href = '/inicio.html';
     return;

@@ -13,10 +13,10 @@
 // ── Auth helpers ─────────────────────────────────────────────────────────────
 
 /**
- * Authenticated fetch – attaches JWT Bearer token from localStorage.
+ * Authenticated fetch – attaches JWT Bearer token from sessionStorage.
  */
 function authFetch(url, options = {}) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   return fetch(url, {
     ...options,
     headers: {
@@ -31,7 +31,7 @@ function authFetch(url, options = {}) {
  * Returns parsed usuario object, or redirects to login if missing.
  */
 function obtenerUsuario() {
-  const data = localStorage.getItem('usuario');
+  const data = sessionStorage.getItem('usuario');
   if (!data) { window.location.href = '/login.html'; return null; }
   try {
     return JSON.parse(data);
@@ -45,8 +45,8 @@ function obtenerUsuario() {
  * Clears auth data and redirects to login.
  */
 function cerrarSesion() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('usuario');
+  sessionStorage.removeItem('token');
+  sessionStorage.removeItem('usuario');
   window.location.href = '/login.html';
 }
 

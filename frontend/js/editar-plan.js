@@ -1,4 +1,4 @@
-const idPlan = localStorage.getItem("planActual");
+const idPlan = sessionStorage.getItem("planActual");
 const formulario = document.getElementById("formulario-editar");
 const nombre = document.getElementById("nombre");
 const descripcion = document.getElementById("descripcion");

@@ -1,4 +1,4 @@
-const idPlan = localStorage.getItem("planActual");
+const idPlan = sessionStorage.getItem("planActual");
 const contenidoPlan = document.getElementById("contenido-plan");
 const nombrePlan = document.getElementById("nombre-plan");
 const descripcionPlan = document.getElementById("descripcion-plan");
@@ -13,7 +13,7 @@ const confirmar = document.getElementById("confirmar");
 const eliminar = document.getElementById("eliminar");
 const cancelar = document.getElementById("cancelar");
 const volver = document.getElementById("volver");
-const usuario = JSON.parse(localStorage.getItem("usuario"));
+const usuario = JSON.parse(sessionStorage.getItem("usuario"));
 let plan;
 
 function nombreEstado(estado) {

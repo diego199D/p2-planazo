@@ -10,7 +10,7 @@ const PLAN = {
 
 test.describe('Flujo principal: crear plan → aparecer en Mis Planes', () => {
   test('debe crear un plan y verlo en la lista de inicio', async ({ page }) => {
-    // ── 1. SIMULAR LOGIN (inyectar usuario en localStorage) ───────────────────
+    // ── 1. SIMULAR LOGIN (inyectar usuario en sessionStorage) ───────────────────
     console.log('▶ Paso 1: Navegando a login...');
     await page.goto('/login.html');
     await expect(page).toHaveTitle(/Planazo/i);
@@ -19,11 +19,11 @@ test.describe('Flujo principal: crear plan → aparecer en Mis Planes', () => {
     await page.fill('#correo', USUARIO.correo);
     await page.fill('#password', '1234');
 
-    // Inyectar el usuario en localStorage ANTES de que el redirect ocurra
+    // Inyectar el usuario en sessionStorage ANTES de que el redirect ocurra
     // ya que el login.js no persiste el usuario, lo hace el registro.
     // Lo seteamos manualmente para simular una sesión activa.
     await page.evaluate((usuario) => {
-      localStorage.setItem('usuario', JSON.stringify(usuario));
+      sessionStorage.setItem('usuario', JSON.stringify(usuario));
     }, USUARIO);
 
     await page.click('button[type="submit"]');

@@ -12,7 +12,7 @@
  * Authenticated fetch wrapper – attaches Bearer token to every request.
  */
 function authFetch(url, options = {}) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   return fetch(url, {
     ...options,
     headers: {
@@ -142,8 +142,8 @@ async function manejarLogin(e) {
     }
 
     // Persist credentials
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('usuario', JSON.stringify(data.usuario));
+    sessionStorage.setItem('token', data.token);
+    sessionStorage.setItem('usuario', JSON.stringify(data.usuario));
 
     mostrarExito('¡Bienvenido! Redirigiendo…');
 
@@ -162,7 +162,7 @@ async function manejarLogin(e) {
 
 (function init() {
   // If already logged in, skip login page
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   if (token) {
     window.location.href = '/inicio.html';
     return;

@@ -4,7 +4,7 @@ const descripcion = document.getElementById("descripcion");
 const fecha = document.getElementById("fecha");
 const mensaje = document.getElementById("mensaje");
 const volver = document.getElementById("volver");
-const usuario = JSON.parse(localStorage.getItem("usuario"));
+const usuario = JSON.parse(sessionStorage.getItem("usuario"));
 
 formulario.addEventListener("submit", async function (evento) {
   evento.preventDefault();
@@ -31,7 +31,7 @@ formulario.addEventListener("submit", async function (evento) {
   });
   const plan = await respuesta.json();
 
-  localStorage.setItem("planActual", plan.id);
+  sessionStorage.setItem("planActual", plan.id);
   window.location.href = "detalle-plan.html";
 });
 
