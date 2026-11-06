@@ -201,30 +201,36 @@ async function cargarPlanesBase() {
 
 function renderPlanBaseCard(plan) {
   const fecha = formatearFecha(plan.fecha);
-  const organizador = escaparHtml(plan.organizador || plan.creador || plan.autor || 'Administración');
+  const organizador = escaparHtml(plan.organizador_nombre || plan.organizador || 'Administración');
 
   return `
     <div class="plan-card" data-id="${plan.id}">
       <div class="plan-card-title">${escaparHtml(plan.nombre)}</div>
       <div class="plan-card-desc">${escaparHtml(plan.descripcion || '')}</div>
       <div class="plan-card-meta">
-        <span>📅 ${fecha}</span>
-        <span>👤 ${organizador}</span>
+        <span>📅 Fecha del plan: ${fecha}</span>
+        <span>👤 Propuesto por: ${organizador}</span>
       </div>
       <div class="plan-card-footer">
         <span class="badge badge-aprobado">Aprobado</span>
-        <button class="btn btn-outline btn-sm" onclick="irAVotacion(${plan.id})">Ver votación</button>
+        <button class="btn btn-primario btn-sm" onclick="irAVotacion(${plan.id})">Votar este plan →</button>
       </div>
     </div>
   `;
 }
 
 function irAVotacion(planId) {
+  // Clear any previous search so the target card is visible
+  const buscador = document.getElementById('buscar-plan');
+  if (buscador) buscador.value = '';
   activarTab('votaciones');
-  // Scroll to that plan's card after a tick
+  // Scroll to that plan's card and highlight it briefly
   setTimeout(() => {
     const card = document.querySelector(`#lista-votaciones [data-id="${planId}"]`);
-    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (!card) return;
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    card.classList.add('plan-card-resaltado');
+    setTimeout(() => card.classList.remove('plan-card-resaltado'), 2000);
   }, 300);
 }
 
@@ -481,6 +487,7 @@ async function cargarVotaciones() {
     listaEl.innerHTML = planesBaseCache
       .map(p => renderVotacionCard(p, null))
       .join('');
+    filtrarVotaciones();
 
     // Fetch votes for each plan in parallel
     await Promise.all(planesBaseCache.map(p => cargarVotosPlan(p.id)));
@@ -490,6 +497,32 @@ async function cargarVotaciones() {
     console.error('cargarVotaciones:', err);
   } finally {
     if (loadingEl) loadingEl.style.display = 'none';
+  }
+}
+
+/**
+ * Filters the voting cards by name/description using the search box.
+ */
+function filtrarVotaciones() {
+  const buscador = document.getElementById('buscar-plan');
+  const sinResultados = document.getElementById('sin-resultados');
+  const texto = buscador ? buscador.value.trim().toLowerCase() : '';
+  const cards = document.querySelectorAll('#lista-votaciones .plan-card');
+  let visibles = 0;
+
+  cards.forEach(card => {
+    const titulo = card.querySelector('.plan-card-title');
+    const desc   = card.querySelector('.plan-card-desc');
+    const contenido = `${titulo ? titulo.textContent : ''} ${desc ? desc.textContent : ''}`.toLowerCase();
+    const coincide = contenido.includes(texto);
+    card.style.display = coincide ? '' : 'none';
+    if (coincide) visibles++;
+  });
+
+  if (sinResultados) {
+    const mostrar = texto !== '' && cards.length > 0 && visibles === 0;
+    sinResultados.textContent = mostrar ? `Ningún plan coincide con «${buscador.value.trim()}».` : '';
+    sinResultados.style.display = mostrar ? 'block' : 'none';
   }
 }
 
@@ -881,6 +914,18 @@ async function init() {
 
   // Init tab events
   initTabs();
+
+  // In-text links that open another tab (e.g. "Mis planes" in the help box)
+  document.querySelectorAll('[data-ir-tab]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      activarTab(link.dataset.irTab);
+    });
+  });
+
+  // Search box in "Votar planes"
+  const buscador = document.getElementById('buscar-plan');
+  if (buscador) buscador.addEventListener('input', filtrarVotaciones);
 
   // Init modal events
   initModal();

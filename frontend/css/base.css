@@ -171,6 +171,65 @@ body {
   margin-bottom: 0.25rem;
 }
 
+/* ---------- Info box (Explorar planes) ---------- */
+.info-box {
+  background: #eef2ff;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primario);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+.info-box-titulo {
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.info-box ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.info-box li + li { margin-top: 0.2rem; }
+
+.info-box .link-tab {
+  color: var(--primario);
+  font-weight: 600;
+}
+
+/* ---------- Buscador (Votar planes) ---------- */
+.buscador {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-width: 420px;
+  margin-bottom: 1.25rem;
+}
+
+.buscador label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.buscador input {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.buscador input:focus {
+  outline: none;
+  border-color: var(--primario);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
 /* ---------- Plan Card ---------- */
 .planes-grid {
   display: grid;
@@ -191,6 +250,11 @@ body {
 }
 
 .plan-card:hover { box-shadow: var(--shadow-md); }
+
+.plan-card-resaltado {
+  border-color: var(--primario);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+}
 
 .plan-card-title {
   font-size: 1rem;

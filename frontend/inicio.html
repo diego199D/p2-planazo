@@ -25,16 +25,24 @@
 
     <!-- TABS -->
     <div class="tabs" id="tabs-bar" role="tablist">
-      <button class="tab-btn active" data-tab="planes-base" role="tab" aria-selected="true">Planes Base</button>
-      <button class="tab-btn" data-tab="mis-planes" role="tab" aria-selected="false">Mis Planes</button>
-      <button class="tab-btn" data-tab="votaciones" role="tab" aria-selected="false">Votaciones</button>
+      <button class="tab-btn active" data-tab="planes-base" role="tab" aria-selected="true">Explorar planes</button>
+      <button class="tab-btn" data-tab="mis-planes" role="tab" aria-selected="false">Mis planes</button>
+      <button class="tab-btn" data-tab="votaciones" role="tab" aria-selected="false">Votar planes</button>
       <!-- Admin tab added dynamically -->
     </div>
 
     <!-- TAB: PLANES BASE -->
     <div class="tab-content active" id="tab-planes-base">
-      <h2 class="section-title">Planes Base</h2>
-      <p class="section-sub">Planes aprobados disponibles para toda la comunidad.</p>
+      <h2 class="section-title">Explorar planes</h2>
+      <p class="section-sub">Planes aprobados abiertos a toda la comunidad. Elige uno y vota si te apuntas.</p>
+      <aside class="info-box" aria-labelledby="info-box-titulo">
+        <p class="info-box-titulo" id="info-box-titulo">ℹ️ ¿Qué son estos planes?</p>
+        <ul>
+          <li>Son planes ya aprobados por el administrador.</li>
+          <li>Cualquiera puede votar 👍 Sí o 👎 No.</li>
+          <li>¿Quieres proponer el tuyo? Créalo en <a href="#" class="link-tab" data-ir-tab="mis-planes">Mis planes</a>; aparecerá aquí cuando se apruebe.</li>
+        </ul>
+      </aside>
       <div id="loading-planes-base" class="loading-msg">Cargando planes...</div>
       <div id="lista-planes-base" class="planes-grid"></div>
     </div>
@@ -42,7 +50,7 @@
     <!-- TAB: MIS PLANES -->
     <div class="tab-content" id="tab-mis-planes">
       <div class="section-header">
-        <h2 class="section-title">Mis Planes</h2>
+        <h2 class="section-title">Mis planes</h2>
         <button class="btn btn-primario" id="btn-abrir-modal">+ Crear nuevo plan</button>
       </div>
       <p class="section-sub">Aquí aparecen los planes que has creado.</p>
@@ -52,8 +60,13 @@
 
     <!-- TAB: VOTACIONES -->
     <div class="tab-content" id="tab-votaciones">
-      <h2 class="section-title">Votaciones</h2>
-      <p class="section-sub">Vota en los planes base aprobados.</p>
+      <h2 class="section-title">Votar planes</h2>
+      <p class="section-sub">Elige 👍 Sí o 👎 No en cada plan. Puedes cambiar tu voto.</p>
+      <div class="buscador">
+        <label for="buscar-plan">Buscar plan</label>
+        <input type="search" id="buscar-plan" placeholder="Escribe el nombre del plan…" autocomplete="off" />
+      </div>
+      <p id="sin-resultados" class="empty-msg" style="display:none;" aria-live="polite"></p>
       <div id="loading-votaciones" class="loading-msg">Cargando votaciones...</div>
       <div id="lista-votaciones" class="planes-grid votos-grid"></div>
     </div>
