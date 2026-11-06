@@ -1,10 +1,8 @@
 # Clase 20 – Mejora de usabilidad: navegación y nombres en Planazo
 
-## 1. Integrantes
+## 1. Integrante
 
-- _(Nombre completo – rol)_
-- _(Nombre completo – rol)_
-- _(Nombre completo – rol)_
+Diego Anibal Toledo Yapura
 
 ## 2. Problema identificado
 
